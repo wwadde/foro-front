@@ -1,34 +1,19 @@
 import { useState } from 'react';
-import Alert from './components/Alert';
-import Button from './components/Button';
-import ListGroup from './components/ListGroup';
+import { BrowserRouter } from 'react-router-dom';
+import Navbar from './components/layout/NavBar';
+import AppRoutes from './routes/AppRoutes';
 
-function App() {
+export default function App() {
+  const [userLogged, setUserLogged] = useState(false);
 
-  const [alertVisible, setAlertVisibility] = useState(false);
-
-  // let items = [
-  //   'Ibagué',
-  //   'Cali',
-  //   'Bogotá',
-  //   'Medellín',
-  //   'Cartagena',
-  //   'Barranquilla',
-  //   'Santa Marta',
-  // ];
-
-  // const handleSelectItem = (item: string) => {
-  //   console.log(item);
-  // };
-
-  // return <div><ListGroup items={items} titulo='Ciudades' onSelectItem={handleSelectItem} /></div>;
   return (
-    <div>
-      { alertVisible && <Alert onClose={() => setAlertVisibility(false)}>Alerta</Alert>}
-      <Button color="secondary" onClick={() => setAlertVisibility(true)}>William</Button>
-    </div>
-  )
+    <BrowserRouter>
+      <div className="d-flex flex-column min-vh-100">
+        <Navbar userLogged={userLogged} />
+        <main className="container flex-grow-1 py-4">
+          <AppRoutes userLogged={userLogged} setUserLogged={setUserLogged} />
+        </main>
+      </div>
+    </BrowserRouter>
+  );
 }
-
-
-export default App;
