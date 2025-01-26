@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import hideIcon from '../assets/hide.png';
 import showIcon from '../assets/show.png';
 import googleIcon from '../assets/google.png';
+import { useNavigate } from 'react-router-dom';
+
+interface RegistroProps {
+    setUserLogged: (value: boolean) => void;
+}
 
 
-
-export default function Registro() {
-
+export default function Registro({ setUserLogged }: RegistroProps) {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -18,8 +22,13 @@ export default function Registro() {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setUserLogged(true);
+        navigate('/forum');
+    };
     return (
-        <form className="row">
+        <form className="row" onSubmit={handleSubmit}>
 
             <div className="input-group mb-3 col-12">
                 <span className="input-group-text">@</span>

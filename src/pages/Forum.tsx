@@ -8,7 +8,11 @@ interface Post {
   replies: number;
 }
 
-export default function Forum() {
+interface ForumProps {
+    userLogged?: boolean;
+  }
+  
+  export default function Forum({ userLogged }: ForumProps) {
   const dummyPosts: Post[] = [
     {
       id: 1,
@@ -40,7 +44,9 @@ export default function Forum() {
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Temas de Discusión</h2>
-        <button className="btn btn-primary">Nuevo Tema</button>
+        {userLogged && (
+          <button className="btn btn-primary">Nuevo Tema</button>
+        )}
       </div>
       <div className="list-group">
         {dummyPosts.map(post => (
@@ -54,6 +60,9 @@ export default function Forum() {
               <small className="text-muted">Por: {post.author}</small>
               <span className="badge bg-primary rounded-pill">{post.replies} respuestas</span>
             </div>
+            {userLogged && (
+              <button className="btn btn-sm btn-outline-primary mt-2">Responder</button>
+            )}
           </div>
         ))}
       </div>
