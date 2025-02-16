@@ -1,5 +1,5 @@
 
-interface Post {
+type Post = {
   id: number;
   title: string;
   author: string;
