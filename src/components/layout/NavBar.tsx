@@ -12,9 +12,14 @@ interface NavbarProps {
 export default function Navbar({ userLogged }: NavbarProps) {
   const [isNavCollapsed, setIsNavCollapsed] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState<'login' | 'register' | null>(null);
+
 
   const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
-  const handleShowModal = () => setShowModal(true);
+  const handleShowModal = (type: 'login' | 'register') => {
+    setModalType(type);
+    setShowModal(true);
+  };
   const handleCloseModal = () => setShowModal(false);
 
   return (
@@ -46,14 +51,29 @@ export default function Navbar({ userLogged }: NavbarProps) {
               </li>
               {!userLogged && (
                 <li className="nav-item">
-                  <button className="nav-link btn" onClick={handleShowModal}>Registro</button>
+                  <button className="nav-link btn" onClick={() => handleShowModal('login')}>Ingresar</button>
+                  </li>
+              )}
+              {!userLogged && (
+                <li className="nav-item">
+                  <button className="nav-link btn" onClick={() => handleShowModal('register')}>Registro</button>
+                  </li>
+              )}
+              {userLogged && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/profile">Perfil</Link>
                 </li>
               )}
             </ul>
           </div>
         </div>
       </nav>
-      <Modal showModal={showModal} handleCloseModal={handleCloseModal} />
+      <Modal 
+        showModal={showModal} 
+        handleCloseModal={handleCloseModal} 
+        isLogin={modalType === 'login'} 
+        isRegister={modalType === 'register'} 
+      />
     </>
   );
 }

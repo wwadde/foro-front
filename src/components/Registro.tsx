@@ -60,6 +60,8 @@ export default function Registro({ setUserLogged }: RegistroProps) {
                             type={showPassword ? 'text' : 'password'}
                             className="form-control"
                             id="floatingPassword"
+                            autoComplete="new-password"
+                            name="new-password"
                             placeholder="Password"
                         />
                         <label className="mx-2" htmlFor="floatingPassword">Contraseña</label>
@@ -78,6 +80,8 @@ export default function Registro({ setUserLogged }: RegistroProps) {
                             type={showConfirmPassword ? 'text' : 'password'}
                             className="form-control"
                             id="floatingConfirmPassword"
+                            autoComplete="new-password"
+                            name="new-password"
                             placeholder="Password"
                         />
                         <label className="mx-2" htmlFor="floatingConfirmPassword">Confirmar Contraseña</label>
