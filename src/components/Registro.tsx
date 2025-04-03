@@ -4,12 +4,11 @@ import showIcon from '../assets/show.png';
 import googleIcon from '../assets/google.png';
 import { useNavigate } from 'react-router-dom';
 import OTPInput from './Otp';
+import { useAuth } from '../context/AuthContext';
 
-interface RegistroProps {
-    setUserLogged: (value: boolean) => void;
-}
 
-export default function Registro({ setUserLogged }: RegistroProps) {
+export default function Registro() {
+    const { setUserLogged } = useAuth();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);

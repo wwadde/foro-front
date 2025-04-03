@@ -23,9 +23,12 @@ export async function login( {username, password}: LoginRequest) {
   try {
     return await api.post(LOGIN_URL, { username, password });
   } catch (error) {
-    throw new Error('Error al loguearse ' + error);
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Error al loguearse inténtelo de nuevo');
+    } else {
+      throw new Error('Error al loguearse inténtelo de nuevo');
+    }
   }
-
 }
 
 export function register( {username, password, email}: RegisterRequest) {
