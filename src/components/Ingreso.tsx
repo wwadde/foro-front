@@ -1,23 +1,41 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import googleIcon from '../assets/google.png';
-import { login } from '../services/api';
+import { login } from '../services/authentication';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-export default function Ingreso() {
-  const { setUserLogged } = useAuth();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+interface Props {
+  handleCloseModal?: () => void;
+}
+
+export default function Ingreso({ handleCloseModal = () => {} }: Props) {
+  const { setToken } = useAuth();
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
+    const username = usernameRef.current?.value || '';
+    const password = passwordRef.current?.value || '';
+
+    if (!username || !password) {
+      setError('El usuario y la contraseña son obligatorios');
+      setLoading(false);
+      return;
+    }
+    
     try {
-      const response = await login({ username, password });
-      console.log('Login successful:', response);
-      setUserLogged(true);
+      const respuesta = await login({ username, password });
+      setToken(respuesta.jwToken.replace('Bearer ', ''));
+      console.log(respuesta.jwToken);
+      navigate('/forum');
+      handleCloseModal();
     } catch (ex) {
       if (ex instanceof Error) {
         setError(ex.message);
@@ -28,6 +46,8 @@ export default function Ingreso() {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div className="carousel">
@@ -55,8 +75,7 @@ export default function Ingreso() {
               className="form-control" 
               id="floatingInputGroup1" 
               placeholder="Username" 
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              ref={usernameRef}
             />
             <label htmlFor="floatingInputGroup1">Usuario</label>
           </div>
@@ -70,8 +89,7 @@ export default function Ingreso() {
             placeholder="Password"
             autoComplete="new-password"
             name="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            ref={passwordRef}
           />
           <label className="mx-2" htmlFor="floatingPassword">Contraseña</label>
         </div>

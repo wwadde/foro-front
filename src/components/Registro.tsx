@@ -1,21 +1,44 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useRef, useEffect } from 'react';
 import hideIcon from '../assets/hide.png';
 import showIcon from '../assets/show.png';
 import googleIcon from '../assets/google.png';
 import { useNavigate } from 'react-router-dom';
 import OTPInput from './Otp';
-import { useAuth } from '../context/AuthContext';
+import { registrarEnviarOTP, validarOTP } from '../services/authentication';
+
+interface Props {
+    handleCloseModal?: () => void;
+}
 
 
-export default function Registro() {
-    const { setUserLogged } = useAuth();
-    const navigate = useNavigate();
+export default function Registro({ handleCloseModal = () => { } }: Props) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [activeSlide, setActiveSlide] = useState(0);
-    const [email, setEmail] = useState('');
+    const usernameRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+    const confirmPasswordRef = useRef<HTMLInputElement>(null);
+    const emailRef = useRef<HTMLInputElement>(null);
     const [verificationCode, setVerificationCode] = useState(Array(8).fill(''));
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [datosRegistro, setDatosRegistro] = useState({
+        username: '',
+        password: '',
+        email: ''
+    });
 
+    const navigate = useNavigate();
+
+    const getRefValues = () => {
+        const username = usernameRef.current?.value || '';
+        const password = passwordRef.current?.value || '';
+        const confirmPassword = confirmPasswordRef.current?.value || '';
+        const email = emailRef.current?.value || '';
+
+        return { username, password, confirmPassword, email };
+
+    };
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -24,23 +47,62 @@ export default function Registro() {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    const handleNextSlide = (e: FormEvent<HTMLFormElement>) => {
+    const handleNextSlide = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setActiveSlide(1);
-        // Here you would trigger email verification code
-        console.log('Sending verification code to:', email);
+        setError(null);
+
+        const { username, password, confirmPassword, email } = getRefValues();
+
+        if (password !== confirmPassword) {
+            setError('Las contraseñas no coinciden');
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            await registrarEnviarOTP({ username, password, email });
+            setDatosRegistro({ username, password, email });
+            setActiveSlide(1);
+            console.log('Código de verificación enviado a:', email);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error al enviar el código de verificación');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleVerification = (e: FormEvent<HTMLFormElement>) => {
+    const handleVerification = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // TODO conectar al servidor
-
+        setError(null);
         const code = verificationCode.join('');
-        console.log('Verifying code:', code);
-        // Verify code logic here
-        setUserLogged(true);
-        navigate('/forum');
+        const { username, password, email } = getRefValues();
+        setIsLoading(true);
+        try {
+            const isValid = await validarOTP({ username, password, email }, code);
+            if (isValid) {
+                console.log('Código verificado correctamente');
+                navigate('/forum');
+                handleCloseModal();
+            } else {
+                setError('El código de verificación es incorrecto');
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error al verificar el código');
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+
+
+    useEffect(() => {
+        if (activeSlide === 0) {
+            if (usernameRef.current) usernameRef.current.value = datosRegistro.username;
+            if (passwordRef.current) passwordRef.current.value = datosRegistro.password;
+            if (confirmPasswordRef.current) confirmPasswordRef.current.value = datosRegistro.password;
+            if (emailRef.current) emailRef.current.value = datosRegistro.email;
+        }
+    }, [activeSlide, datosRegistro]);
 
     return (
         <div className="carousel">
@@ -49,7 +111,14 @@ export default function Registro() {
                     <div className="input-group mb-3 col-12">
                         <span className="input-group-text">@</span>
                         <div className="form-floating">
-                            <input type="text" className="form-control" id="floatingInputGroup1" placeholder="Username" />
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="floatingInputGroup1"
+                                placeholder="Username"
+                                ref={usernameRef}
+                                required
+                            />
                             <label htmlFor="floatingInputGroup1">Usuario</label>
                         </div>
                     </div>
@@ -62,6 +131,8 @@ export default function Registro() {
                             autoComplete="new-password"
                             name="new-password"
                             placeholder="Password"
+                            ref={passwordRef}
+                            required
                         />
                         <label className="mx-2" htmlFor="floatingPassword">Contraseña</label>
                         <button
@@ -82,6 +153,8 @@ export default function Registro() {
                             autoComplete="new-password"
                             name="new-password"
                             placeholder="Password"
+                            ref={confirmPasswordRef}
+                            required
                         />
                         <label className="mx-2" htmlFor="floatingConfirmPassword">Confirmar Contraseña</label>
                         <button
@@ -95,32 +168,35 @@ export default function Registro() {
                     </div>
 
                     <div className="form-floating mb-3 col-12">
-                        <input 
-                            type="email" 
-                            className="form-control" 
-                            id="floatingInput" 
+                        <input
+                            type="email"
+                            className="form-control"
+                            id="floatingInput"
                             placeholder="name@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required 
+                            ref={emailRef}
+                            required
                         />
                         <label className="mx-2" htmlFor="floatingInput">Email</label>
                     </div>
 
+                    {error && <div className="text-danger text-center mb-3">{error}</div>}
+
                     <div className="col-12 text-center">
-                        <button type="submit" className="btn btn-primary">Siguiente</button>
+                        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                            {isLoading ? 'Enviando...' : 'Siguiente'}
+                        </button>
                     </div>
 
                     <div className="col-12 text-center mt-3">
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             className="btn btn-light border d-flex align-items-center mx-auto"
                             onClick={() => console.log('Google login')}
                         >
-                            <img 
-                                src={googleIcon} 
-                                alt="Google" 
-                                style={{ width: '24px', height: '24px', marginRight: '8px' }} 
+                            <img
+                                src={googleIcon}
+                                alt="Google"
+                                style={{ width: '24px', height: '24px', marginRight: '8px' }}
                             />
                             Continuar con Google
                         </button>
@@ -128,20 +204,23 @@ export default function Registro() {
                 </form>
             ) : (
                 <form className="row" onSubmit={handleVerification}>
-                    <label className="mb-2 text-center" htmlFor="verificationCode">Se envió un código de verificación al correo suministrado: {email}</label>
+                    <label className="mb-2 text-center" htmlFor="verificationCode">
+                        Se envió un código de verificación al correo suministrado: {emailRef.current?.value}
+                    </label>
                     <br />
                     <OTPInput length={8} onChange={setVerificationCode} />
+                    {error && <div className="text-danger text-center mb-3">{error}</div>}
                     <div className="col-12 text-center">
                         <button
                             type="button"
                             className="btn btn-secondary me-2"
                             onClick={() => setActiveSlide(0)}
+                            disabled={isLoading}
                         >
                             Atrás
                         </button>
-                        {/* Enviar el codigo OTP al servidor para verificar */}
-                        <button type="submit" className="btn btn-primary">
-                            Verificar
+                        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                            {isLoading ? 'Verificando...' : 'Verificar'}
                         </button>
                     </div>
                 </form>

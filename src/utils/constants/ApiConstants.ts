@@ -1,3 +1,8 @@
 export const BASE_URL = 'http://localhost:8080/foro';
+
+// Autenticacion
 export const LOGIN_URL = '/autenticar/login';
-export const REGISTER_URL = '/autenticar/register';
+export const ENVIAROTP_URL = '/autenticar/registrar-enviar-otp';
+export const REGISTRARUSUARIO_URL = '/autenticar/registrar-validar-otp';
+
+

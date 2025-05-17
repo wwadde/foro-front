@@ -62,10 +62,7 @@ export default function Home() {
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <Registro setUserLogged={() => {
-                    handleCloseModal();
-                    navigate('/forum');
-                  }} />
+                  <Registro></Registro>
                 </div>
               </div>
             </div>

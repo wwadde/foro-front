@@ -32,7 +32,7 @@ export default function Modal({ showModal, handleCloseModal, isLogin, isRegister
                 ></button>
               </div>
               <div className="modal-body">
-                <Registro />
+                <Registro handleCloseModal={handleCloseModal}/>
               </div>
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function Modal({ showModal, handleCloseModal, isLogin, isRegister
                 ></button>
               </div>
               <div className="modal-body">
-                <Ingreso />
+                <Ingreso handleCloseModal={handleCloseModal}/>
               </div>
             </div>
           </div>
