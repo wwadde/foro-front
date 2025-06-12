@@ -19,7 +19,7 @@ export default function Registro({ handleCloseModal = () => { } }: Props) {
     const passwordRef = useRef<HTMLInputElement>(null);
     const confirmPasswordRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
-    const [verificationCode, setVerificationCode] = useState(Array(8).fill(''));
+    const [verificationCode, setVerificationCode] = useState(Array(6).fill(''));
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [datosRegistro, setDatosRegistro] = useState({
@@ -55,6 +55,16 @@ export default function Registro({ handleCloseModal = () => { } }: Props) {
 
         if (password !== confirmPassword) {
             setError('Las contraseñas no coinciden');
+            return;
+        }
+
+        if (!username || !password || !email) {
+            setError('Todos los campos son obligatorios');
+            return;
+        }
+
+        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+            setError('El email no es válido');
             return;
         }
 
@@ -197,7 +207,7 @@ export default function Registro({ handleCloseModal = () => { } }: Props) {
                         Se envió un código de verificación al correo suministrado: {emailRef.current?.value}
                     </label>
                     <br />
-                    <OTPInput length={8} onChange={setVerificationCode} />
+                    <OTPInput length={6} onChange={setVerificationCode} />
                     {error && <div className="text-danger text-center mb-3">{error}</div>}
                     <div className="col-12 text-center">
                         <button
