@@ -1,10 +1,10 @@
 import { FormEvent, useState, useRef, useEffect } from 'react';
 import hideIcon from '../assets/hide.png';
 import showIcon from '../assets/show.png';
-import googleIcon from '../assets/google.png';
 import { useNavigate } from 'react-router-dom';
 import OTPInput from './Otp';
 import { registrarEnviarOTP, validarOTP } from '../services/authentication';
+import LoginGoogle from './LoginGoogle';
 
 interface Props {
     handleCloseModal?: () => void;
@@ -188,18 +188,7 @@ export default function Registro({ handleCloseModal = () => { } }: Props) {
                     </div>
 
                     <div className="col-12 text-center mt-3">
-                        <button
-                            type="button"
-                            className="btn btn-light border d-flex align-items-center mx-auto"
-                            onClick={() => console.log('Google login')}
-                        >
-                            <img
-                                src={googleIcon}
-                                alt="Google"
-                                style={{ width: '24px', height: '24px', marginRight: '8px' }}
-                            />
-                            Continuar con Google
-                        </button>
+                    <LoginGoogle onSuccessCloseModal={handleCloseModal} />
                     </div>
                 </form>
             ) : (

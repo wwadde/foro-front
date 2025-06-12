@@ -36,21 +36,6 @@ export async function login({ username, password }: LoginRequest) {
   }
 }
 
-export async function oauth2Google() {
-  try {
-    const response = await api.get(BASE_URL);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.log(error);
-      throw new Error(error.response.data.message || 'Error al iniciar sesión');
-    
-    } else {
-      throw new Error('Error al iniciar sesión');
-    }
-  }
-}
-
 export async function registrarEnviarOTP({ username, password, email }: RegisterRequest) {
   try {
     const response = await api.post(ENVIAROTP_URL, { username, password, email });

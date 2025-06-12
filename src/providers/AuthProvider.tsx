@@ -1,5 +1,5 @@
 import { useState, ReactNode } from 'react';
-import { AuthContext } from './AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import Cookies from 'js-cookie';
 
 const AuthCookieName = 'auth-token';

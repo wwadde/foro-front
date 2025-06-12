@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
-import googleIcon from '../assets/google.png';
 import { login } from '../services/authentication';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import LoginGoogle from './LoginGoogle';
 
 interface Props {
   handleCloseModal?: () => void;
@@ -52,20 +52,8 @@ export default function Ingreso({ handleCloseModal = () => {} }: Props) {
   return (
     <div className="carousel">
       <form className="row" onSubmit={handleSubmit}>
-        <div className="col-12 text-center mb-3">
-          <button 
-            type="button" 
-            className="btn btn-light border d-flex align-items-center mx-auto"
-            onClick={() => console.log('Google login')}
-          >
-            <img 
-              src={googleIcon} 
-              alt="Google" 
-              style={{ width: '24px', height: '24px', marginRight: '8px' }} 
-            />
-            Continuar con Google
-          </button>
-        </div>
+        
+        <LoginGoogle onSuccessCloseModal={handleCloseModal}/>
 
         <div className="input-group mb-3 col-12">
           <span className="input-group-text">@</span>
