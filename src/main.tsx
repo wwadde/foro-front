@@ -8,6 +8,7 @@ AxiosInterceptor();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    {/* Agregar error boundary component */}
     <App />
   </StrictMode>
 )

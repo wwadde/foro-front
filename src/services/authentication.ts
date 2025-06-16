@@ -27,14 +27,13 @@ export async function login({ username, password }: LoginRequest) {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      console.log(error);
-      throw new Error(error.response.data.message || 'Error al iniciar sesión');
-    
+      throw new Error(error.response.data.message || 'Error al iniciar sesión');    
     } else {
       throw new Error('Error al iniciar sesión');
     }
   }
 }
+
 
 export async function registrarEnviarOTP({ username, password, email }: RegisterRequest) {
   try {
@@ -42,6 +41,9 @@ export async function registrarEnviarOTP({ username, password, email }: Register
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
+      console.log(error.response.data);
+      console.log(error);
+      console.log(error.response)
       throw new Error(error.response.data.message || 'Error al registrarse');
     } else {
       throw new Error('Error al registrarse');
