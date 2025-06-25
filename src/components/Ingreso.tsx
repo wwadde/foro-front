@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function Ingreso({ handleCloseModal = () => {} }: Props) {
-  const { setToken } = useAuth();
+  const { setAccessToken } = useAuth();
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export default function Ingreso({ handleCloseModal = () => {} }: Props) {
     
     try {
       const respuesta = await login({ username, password });
-      setToken(respuesta.jwToken.replace('Bearer ', ''));
+      setAccessToken(respuesta.jwToken.replace('Bearer ', ''));
       console.log(respuesta.jwToken);
       navigate('/forum');
       handleCloseModal();

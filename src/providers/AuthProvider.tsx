@@ -1,24 +1,28 @@
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import Cookies from 'js-cookie';
+import { decodeJWT, isTokenExpired, isTokenExpiringSoon } from '../utils/JwtService.ts';
 
-const AuthCookieName = 'auth-token';
+const ACCESS_TOKEN_KEY = 'accessToken';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(() => {
-    return Cookies.get(AuthCookieName) || null;
-  });
+
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   const logout = () => {
-    setToken(null);
-    console.log(Cookies.get(AuthCookieName));
-    Cookies.remove(AuthCookieName);
+    setAccessToken(null);
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
   };
 
-  const isAuthenticated = !!token;
+  const isAuthenticated = !!accessToken;
+
+  useEffect(() => {
+    if (accessToken) {
+      sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+    }
+  }, [accessToken]);
 
   return (
-    <AuthContext.Provider value={{ token, setToken, isAuthenticated, logout  }}>
+    <AuthContext.Provider value={{ accessToken, setAccessToken, isAuthenticated, logout  }}>
       {children}
     </AuthContext.Provider>
   );

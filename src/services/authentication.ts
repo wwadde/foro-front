@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_URL, LOGIN_URL, ENVIAROTP_URL, REGISTRARUSUARIO_URL } from '../utils/constants/ApiConstants';
+import { BASE_URL, LOGIN_URL, ENVIAROTP_URL, REGISTRARUSUARIO_URL } from '../utils/ApiConstants';
 
 const api = axios.create({
   baseURL: BASE_URL,

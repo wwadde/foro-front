@@ -1,6 +1,6 @@
 import googleIcon from '../assets/google.png';
 import { useAuth } from '../context/AuthContext';
-import { BASE_URL, GOOGLEAUTH_URL } from '../utils/constants/ApiConstants';
+import { BASE_URL, GOOGLEAUTH_URL } from '../utils/ApiConstants';
 
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 
 export default function LoginGoogle({ onSuccessCloseModal }: Props) {
 
-    const { setToken } = useAuth();
+    const { setAccessToken } = useAuth();
 
     async function handleGoogleLogin() {
 
@@ -34,18 +34,16 @@ export default function LoginGoogle({ onSuccessCloseModal }: Props) {
             if (event.data?.type === 'GOOGLE_AUTH_SUCCESS') {
 
                 const accessToken = event.data?.accessToken;
-                const refreshToken = event.data?.refreshToken;
 
-                if (!accessToken || !refreshToken) {
+                if (!accessToken) {
                     console.error('No se recibio un token de acceso o refresco', event.data);
                     alert('Error al iniciar sesión con Google. Por favor, inténtalo de nuevo.');
                     return;
                 }
 
-                setToken(accessToken);
+                setAccessToken(accessToken);
                 popup?.close();
                 window.removeEventListener('message', messageListener);
-                console.log('Google login successful, token set:', event.data.accessToken);
                 onSuccessCloseModal?.();
             }
         };

@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:8080/foro';
+export const BASE_URL = 'http://localhost:8081/foro';
 
 // Autenticacion
 export const LOGIN_URL = '/autenticar/login';
